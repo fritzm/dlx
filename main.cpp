@@ -37,7 +37,7 @@ int main(int argc, const char *argv[])
 
     po::options_description puzzleOpts("Puzzle options (exactly one required)");
     puzzleOpts.add_options()
-        ("p5", po::value<p5BoardType>(), "pentominoes mode (one of: 6x10, 5x12, 4x20, or 3x15)");
+        ("p5", po::value<p5BoardType>(), "pentominoes mode (one of: 6x10, 5x12, 4x15, or 3x20)");
 
     po::options_description generalOpts("General options");
     generalOpts.add_options()
