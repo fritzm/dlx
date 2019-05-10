@@ -8,7 +8,6 @@
 
 #include "Matrix.hpp"
 #include "Element.hpp"
-#include "Header.hpp"
 
 using namespace std;
 
@@ -34,10 +33,13 @@ Header* Matrix::findColumn(string const& name)
 }
 
 
-int Matrix::findCovers(function<void (vector<Element *>&)> print)
+void Matrix::findCovers(
+    int &nodeCount,
+    int &solutionCount,
+    function<void (vector<Element *>&)> print)
 {
     vector<Element *> solution;
-    return search(solution, print);
+    return search(nodeCount, solutionCount, solution, print);
 }
 
 
@@ -83,12 +85,16 @@ void Matrix::uncoverColumn(Header *col)
 }
 
 
-int Matrix::search(vector<Element *> &solution, function<void (vector<Element *>&)> print)
+void Matrix::search(
+    int &nodeCount,
+    int &solutionCount,
+    vector<Element *> &solution, function<void (vector<Element *>&)> print)
 {
-    int n = 0;
+    ++nodeCount;
     if (h.r == &h) {
+        ++solutionCount;
         print(solution);
-        return 1;
+        return;
     }
     auto c = chooseColumn();
     coverColumn(c);
@@ -97,12 +103,11 @@ int Matrix::search(vector<Element *> &solution, function<void (vector<Element *>
         for(auto j=r->r; j!=r; j=j->r) {
             coverColumn(j->col);
         }
-        n += search(solution, print);
+        search(nodeCount, solutionCount, solution, print);
         for(auto j=r->l; j!=r; j=j->l) {
             uncoverColumn(j->col);
         }
         solution.pop_back();
     }
     uncoverColumn(c);
-    return n;
 }

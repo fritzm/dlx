@@ -1,4 +1,10 @@
 cmake_minimum_required (VERSION 3.0)
-project (psolve)
-add_executable(psolve Header.cpp Element.cpp Matrix.cpp psolve.cpp)
-target_compile_options(psolve PRIVATE -std=c++14)
+project (dlx)
+
+find_package(Boost 1.60 COMPONENTS 
+    program_options REQUIRED
+)
+
+add_executable(dlx Element.cpp Matrix.cpp polyos.cpp main.cpp)
+target_compile_options(dlx PRIVATE -std=c++14)
+target_link_libraries(dlx Boost::program_options)

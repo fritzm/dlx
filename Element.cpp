@@ -1,5 +1,8 @@
+#include <string>
+
 #include "Element.hpp"
-#include "Header.hpp"
+
+using namespace std;
 
 
 Element::Element()
@@ -26,4 +29,12 @@ void Element::InsertUD(Element *before)
     u->d = this;
     col = before->col;
     col->count += 1;
+}
+
+
+Header::Header(string const& name)
+:
+    count(0), name(name)
+{
+    col = this;
 }

@@ -5,9 +5,8 @@
 #include <string>
 #include <vector>
 
-#include "Header.hpp"
+#include "Element.hpp"
 
-class Element;
 
 class Matrix
 {
@@ -17,7 +16,11 @@ public:
 
     Header* findColumn(std::string const& name);
 
-    int findCovers(std::function<void (std::vector<Element *>&)> print);
+    void findCovers(
+        int &nodeCount,
+        int &solutionCount,
+        std::function<void (std::vector<Element *>&)> print
+    );
 
 private:
 
@@ -26,7 +29,12 @@ private:
     void coverColumn(Header *col);
     void uncoverColumn(Header *col);
 
-    int search(std::vector<Element *> &solution, std::function<void (std::vector<Element *>&)> print);
+    void search(
+        int &nodeCount,
+        int &solnCount,    
+        std::vector<Element *> &solution, 
+        std::function<void (std::vector<Element *>&)> print
+    );
 
     Header h;
 
