@@ -14,6 +14,7 @@
 
 using namespace std;
 
+
 class Cell
 {
 public:
@@ -37,8 +38,8 @@ public:
 
     std::string Name() const
     {
-        std::ostringstream str;
-        str << std::setfill('0') << std::setw(2) << rOffset << std::setw(2) << cOffset;
+        ostringstream str;
+        str << setfill('0') << setw(2) << rOffset << setw(2) << cOffset;
         return str.str();
     }
 
@@ -49,8 +50,8 @@ class Piece
 {
 public:
 
-    std::string name;
-    std::vector<Cell> cells;
+    string name;
+    vector<Cell> cells;
 
     bool operator<(Piece const& rhs) const
     {
@@ -80,7 +81,7 @@ vector<Piece> pieces = {
 };
 
 
-void rectBoard(set<Cell> &board, int rows, int cols)
+void rectBoard(set<Cell>& board, int rows, int cols)
 {
     for(auto r=0; r<rows; ++r) {
         for(auto c=0; c<cols; ++c) {
@@ -90,202 +91,7 @@ void rectBoard(set<Cell> &board, int rows, int cols)
 }
 
 
-class Config 
-{
-public:
-
-    virtual void buildBoard(set<Cell> &board) = 0;
-    virtual bool aspectFilter(Piece const& piece, int flip, int rot) = 0;
-    virtual bool placementFilter(Piece const& aspect, Cell const& pos) = 0;
-
-};
-
-
-class pentominoes6x10 : public Config
-{
-public:
-
-    void buildBoard(set<Cell> &board) override
-    {
-        rectBoard(board, 6, 10);
-    }
-
-    bool aspectFilter(Piece const& piece, int flip, int rot) override
-    {
-        return false;
-    }
-
-    bool placementFilter(Piece const& aspect, Cell const& pos) override
-    {
-        return (aspect.name == "X" && ((pos.rOffset > 1) || (pos.cOffset > 3)));
-    }
-
-};
-
-
-class pentominoes5x12 : public Config
-{
-public:
-
-    void buildBoard(set<Cell> &board) override
-    {
-        rectBoard(board, 5, 12);
-    }
-
-    bool aspectFilter(Piece const& piece, int flip, int rot) override
-    {
-        return ((piece.name == "F") && ((flip == 1) || (rot > 1)));
-    }
-
-    bool placementFilter(Piece const& aspect, Cell const& pos) override
-    {
-        return false;
-    }
-
-};
-
-
-class pentominoes4x15 : public Config
-{
-public:
-
-    void buildBoard(set<Cell> &board) override
-    {
-        rectBoard(board, 4, 15);
-    }
-
-    bool aspectFilter(Piece const& piece, int flip, int rot) override
-    {
-        return ((piece.name == "F") && ((flip == 1) || (rot > 1)));
-    }
-
-    bool placementFilter(Piece const& aspect, Cell const& pos) override
-    {
-        return false;
-    }
-
-};
-
-
-class pentominoes3x20 : public Config
-{
-public:
-
-    void buildBoard(set<Cell> &board) override
-    {
-        rectBoard(board, 3, 20);
-    }
-
-    bool aspectFilter(Piece const& piece, int flip, int rot) override
-    {
-        return ((piece.name == "F") && ((flip == 1) || (rot > 1)));
-    }
-
-    bool placementFilter(Piece const& aspect, Cell const& pos) override
-    {
-        return false;
-    }
-
-};
-
-
-map<p5BoardType, Config *> configs = {
-    { p5BoardType::P5_6X10, new pentominoes6x10() },
-    { p5BoardType::P5_5X12, new pentominoes5x12() },
-    { p5BoardType::P5_4X15, new pentominoes4x15() },
-    { p5BoardType::P5_3X20, new pentominoes3x20() }
-};
-
-
-void addPieceAspects(Config *config, Piece const& piece, set<Piece> & aspects)
-{
-    auto aspect = piece;
-    for(int flip=0; flip<2; ++flip) {
-        for(int rot=0; rot<4; ++rot) {
-            if (config->aspectFilter(piece, flip, rot)) continue;
-            sort(aspect.cells.begin(), aspect.cells.end());
-            int minrow = numeric_limits<int>::max();
-            int mincol = numeric_limits<int>::max();
-            for(auto const& cell: aspect.cells) {
-                minrow = min(minrow, cell.rOffset);
-                mincol = min(mincol, cell.cOffset);
-            }
-            for(auto & cell: aspect.cells) {
-                cell.rOffset -= minrow;
-                cell.cOffset -= mincol;
-            }
-            aspects.insert(aspect);
-            for(auto & cell: aspect.cells) {
-                auto temp = cell.rOffset;
-                cell.rOffset = cell.cOffset;
-                cell.cOffset = -temp;
-            }
-        }
-        for(auto & cell: aspect.cells) {
-            cell.rOffset = -cell.rOffset;
-        }
-    }
-}
-
-
-void addAspectPlacements(
-    Config *config,
-    Piece const& aspect, 
-    set<Cell> const& board, 
-    vector<Piece> & placements)
-{
-    for(auto const& pos: board) {
-        auto placement = aspect;
-        bool fit = true;
-        for(auto & cell: placement.cells) {
-            cell.rOffset += pos.rOffset;
-            cell.cOffset += pos.cOffset;
-            if (board.count(cell) == 0) {
-                fit = false;
-                break;
-            }
-        }    
-        if (fit & !config->placementFilter(aspect, pos)) {
-            placements.push_back(placement);
-        }
-    }
-}
-
-
-void init(Matrix &matrix, vector<Piece> const& pieces, p5BoardType boardType)
-{
-    auto config = configs[boardType];
-
-    set<Piece> aspects;
-    for(auto const& piece: pieces) {
-        addPieceAspects(config, piece, aspects);
-    }
-
-    set<Cell> board;
-    config->buildBoard(board);
-
-    vector<Piece> placements;
-    for(auto const& aspect: aspects) {
-        addAspectPlacements(config, aspect, board, placements);
-    }
-
-    for(auto const& placement: placements) {
-        auto c = matrix.findColumn(placement.name);
-        auto e = new Element();
-        e->InsertUD(c);
-        for(auto const& cell: placement.cells) {
-            ostringstream cname;
-            cname << setfill('0') << setw(2) << cell.rOffset << setw(2) << cell.cOffset;
-            auto c2 = matrix.findColumn(cname.str());
-            auto e2 = new Element();
-            e2->InsertUD(c2);
-            e2->InsertLR(e);
-        }
-    }
-}
-
-
-void print(vector<Element *> &solution)
+void print(vector<Element *>& solution)
 {
     static int count = 0;
 
@@ -332,17 +138,167 @@ void print(vector<Element *> &solution)
 }
 
 
-void dontPrint(vector<Element *> &solution)
+void dontPrint(vector<Element *>& solution)
 {
 }
 
 
-void pentominoes(p5BoardType boardType, bool countOnly)
+Pentominoes::~Pentominoes()
+{
+}
+
+
+void Pentominoes::Solve(bool countOnly)
 {
     Matrix matrix;
-    init(matrix, pieces, boardType);
+    Init(matrix, pieces);
     int nodeCount = 0;
     int solutionCount = 0;
     matrix.findCovers(nodeCount, solutionCount, countOnly ? dontPrint : print);
     cout << solutionCount << " solutions, " << nodeCount << " nodes visted" << endl;
+}
+
+
+void Pentominoes::AddPieceAspects(Piece const& piece, set<Piece>& aspects)
+{
+    auto aspect = piece;
+    for(int flip=0; flip<2; ++flip) {
+        for(int rot=0; rot<4; ++rot) {
+            if (AspectFilter(piece, flip, rot)) continue;
+            sort(aspect.cells.begin(), aspect.cells.end());
+            int minrow = numeric_limits<int>::max();
+            int mincol = numeric_limits<int>::max();
+            for(auto const& cell: aspect.cells) {
+                minrow = min(minrow, cell.rOffset);
+                mincol = min(mincol, cell.cOffset);
+            }
+            for(auto & cell: aspect.cells) {
+                cell.rOffset -= minrow;
+                cell.cOffset -= mincol;
+            }
+            aspects.insert(aspect);
+            for(auto & cell: aspect.cells) {
+                auto temp = cell.rOffset;
+                cell.rOffset = cell.cOffset;
+                cell.cOffset = -temp;
+            }
+        }
+        for(auto & cell: aspect.cells) {
+            cell.rOffset = -cell.rOffset;
+        }
+    }
+}
+
+
+void Pentominoes::AddAspectPlacements(
+    Piece const& aspect, 
+    set<Cell> const& board, 
+    vector<Piece> & placements)
+{
+    for(auto const& pos: board) {
+        auto placement = aspect;
+        bool fit = true;
+        for(auto & cell: placement.cells) {
+            cell.rOffset += pos.rOffset;
+            cell.cOffset += pos.cOffset;
+            if (board.count(cell) == 0) {
+                fit = false;
+                break;
+            }
+        }    
+        if (fit & !PlacementFilter(aspect, pos)) {
+            placements.push_back(placement);
+        }
+    }
+}
+
+
+void Pentominoes::Init(Matrix& matrix, vector<Piece> const& pieces)
+{
+    set<Piece> aspects;
+    for(auto const& piece: pieces) {
+        AddPieceAspects(piece, aspects);
+    }
+
+    set<Cell> board;
+    BuildBoard(board);
+
+    vector<Piece> placements;
+    for(auto const& aspect: aspects) {
+        AddAspectPlacements(aspect, board, placements);
+    }
+
+    for(auto const& placement: placements) {
+        auto c = matrix.findColumn(placement.name);
+        auto e = new Element();
+        e->InsertUD(c);
+        for(auto const& cell: placement.cells) {
+            ostringstream cname;
+            cname << setfill('0') << setw(2) << cell.rOffset << setw(2) << cell.cOffset;
+            auto c2 = matrix.findColumn(cname.str());
+            auto e2 = new Element();
+            e2->InsertUD(c2);
+            e2->InsertLR(e);
+        }
+    }
+}
+
+
+bool Pentominoes::AspectFilter(Piece const& piece, int flip, int rot)
+{
+    return false;
+}
+
+
+bool Pentominoes::PlacementFilter(Piece const& aspect, Cell const& pos)
+{
+    return false;
+}
+
+
+void Pentominoes6x10::BuildBoard(set<Cell>& board)
+{
+    rectBoard(board, 6, 10);
+}
+
+
+bool Pentominoes6x10::PlacementFilter(Piece const& aspect, Cell const& pos)
+{
+    return (aspect.name == "X" && ((pos.rOffset > 1) || (pos.cOffset > 3)));
+}
+
+
+void Pentominoes5x12::BuildBoard(set<Cell>& board)
+{
+    rectBoard(board, 5, 12);
+}
+
+
+bool Pentominoes5x12::AspectFilter(Piece const& piece, int flip, int rot)
+{
+    return ((piece.name == "F") && ((flip == 1) || (rot > 1)));
+}
+
+
+void Pentominoes4x15::BuildBoard(set<Cell>& board)
+{
+    rectBoard(board, 4, 15);
+}
+
+
+bool Pentominoes4x15::AspectFilter(Piece const& piece, int flip, int rot)
+{
+    return ((piece.name == "F") && ((flip == 1) || (rot > 1)));
+}
+
+
+void Pentominoes3x20::BuildBoard(set<Cell>& board)
+{
+    rectBoard(board, 3, 20);
+}
+
+
+bool Pentominoes3x20::AspectFilter(Piece const& piece, int flip, int rot)
+{
+    return ((piece.name == "F") && ((flip == 1) || (rot > 1)));
 }

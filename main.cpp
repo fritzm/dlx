@@ -1,33 +1,38 @@
 #include <iostream>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include "polyos.hpp"
 
+#include "boost/any.hpp"
 #include "boost/program_options.hpp"
 
 using namespace std;
 namespace po = boost::program_options;
 
 
-std::istream& operator>>(std::istream& in, p5BoardType& boardType)
+void validate(
+    boost::any& v,
+    const std::vector<std::string>& values,
+    Pentominoes** target_type, int)
 {
-    static map<string, p5BoardType> tokens = {
-        { "6x10", p5BoardType::P5_6X10 },
-        { "5x12", p5BoardType::P5_5X12 },
-        { "4x15", p5BoardType::P5_4X15 },
-        { "3x20", p5BoardType::P5_3X20 }
+    static map<string, function<Pentominoes *()>> factories = {
+        { "6x10", [](){ return new Pentominoes6x10(); }},
+        { "5x12", [](){ return new Pentominoes5x12(); }},
+        { "4x15", [](){ return new Pentominoes4x15(); }},
+        { "3x20", [](){ return new Pentominoes3x20(); }}
     };
 
-    std::string token;
-    in >> token;
+    po::validators::check_first_occurrence(v);
+    auto s = po::validators::get_single_string(values);
 
-    auto it = tokens.find(token);
-    if (it != tokens.end()) {
-        boardType = it->second;
+    auto it = factories.find(s);
+    if (it != factories.end()) {
+        v = boost::any(it->second());
     } else {
-        in.setstate(std::ios_base::failbit);
+        throw po::validation_error(po::validation_error::invalid_option_value);
     }
-
-    return in;
 }
 
 
@@ -37,7 +42,7 @@ int main(int argc, const char *argv[])
 
     po::options_description puzzleOpts("Puzzle options (exactly one required)");
     puzzleOpts.add_options()
-        ("p5", po::value<p5BoardType>(), "pentominoes mode (one of: 6x10, 5x12, 4x15, or 3x20)");
+        ("p5", po::value<Pentominoes *>(), "pentominoes mode (one of: 6x10, 5x12, 4x15, or 3x20)");
 
     po::options_description generalOpts("General options");
     generalOpts.add_options()
@@ -68,7 +73,8 @@ int main(int argc, const char *argv[])
         }
 
         if (vm.count("p5")) {
-            pentominoes(vm["p5"].as<p5BoardType>(), vm["count"].as<bool>());
+            std::unique_ptr<Pentominoes> puzzle(vm["p5"].as<Pentominoes *>());
+            puzzle->Solve(vm["count"].as<bool>());
         }
 
         return 0;
