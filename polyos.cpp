@@ -138,11 +138,6 @@ void print(vector<Element *>& solution)
 }
 
 
-void dontPrint(vector<Element *>& solution)
-{
-}
-
-
 Pentominoes::~Pentominoes()
 {
 }
@@ -154,7 +149,7 @@ void Pentominoes::Solve(bool countOnly)
     Init(matrix, pieces);
     int nodeCount = 0;
     int solutionCount = 0;
-    matrix.findCovers(nodeCount, solutionCount, countOnly ? dontPrint : print);
+    matrix.findCovers(nodeCount, solutionCount, countOnly ? nullptr : print);
     cout << solutionCount << " solutions, " << nodeCount << " nodes visted" << endl;
 }
 

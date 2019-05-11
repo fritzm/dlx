@@ -93,7 +93,7 @@ void Matrix::search(
     ++nodeCount;
     if (h.r == &h) {
         ++solutionCount;
-        print(solution);
+        if (print) print(solution);
         return;
     }
     auto c = chooseColumn();
