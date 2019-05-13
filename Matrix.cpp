@@ -2,7 +2,6 @@
 #include <functional>
 #include <iomanip>
 #include <iostream>
-#include <limits>
 #include <string>
 #include <vector>
 
@@ -36,24 +35,11 @@ Header* Matrix::findColumn(string const& name)
 void Matrix::findCovers(
     int &nodeCount,
     int &solutionCount,
+    std::function<Header *(Header *)> chooseColumn,
     function<void (vector<Element *>&)> print)
 {
     vector<Element *> solution;
-    return search(nodeCount, solutionCount, solution, print);
-}
-
-
-Header *Matrix::chooseColumn()
-{
-    Header *c = nullptr;
-    int s = numeric_limits<int>::max();
-    for(auto j=static_cast<Header *>(h.r); j!=&h; j=static_cast<Header *>(j->r)) {
-        if (j->count < s) {
-            c = j;
-            s = j->count;
-        }
-    }
-    return c;
+    return search(nodeCount, solutionCount, solution, chooseColumn, print);
 }
 
 
@@ -88,22 +74,24 @@ void Matrix::uncoverColumn(Header *col)
 void Matrix::search(
     int &nodeCount,
     int &solutionCount,
-    vector<Element *> &solution, function<void (vector<Element *>&)> print)
+    vector<Element *> &solution,
+    std::function<Header *(Header *)> chooseColumn,
+    function<void (vector<Element *>&)> print)
 {
     ++nodeCount;
-    if (h.r == &h) {
+    auto c = chooseColumn(&h);
+    if (!c) {
         ++solutionCount;
         if (print) print(solution);
         return;
-    }
-    auto c = chooseColumn();
+    } 
     coverColumn(c);
     for(auto r=c->d; r!=c; r=r->d) {
         solution.push_back(r);
         for(auto j=r->r; j!=r; j=j->r) {
             coverColumn(j->col);
         }
-        search(nodeCount, solutionCount, solution, print);
+        search(nodeCount, solutionCount, solution, chooseColumn, print);
         for(auto j=r->l; j!=r; j=j->l) {
             uncoverColumn(j->col);
         }

@@ -1,5 +1,5 @@
-#ifndef POLYOS_H
-#define POLYOS_H
+#ifndef PENTOMINOES_H
+#define PENTOMINOES_H
 
 #include <set>
 #include <vector>
@@ -76,4 +76,4 @@ protected:
 
 };
 
-#endif // !defined(POLYOS_H)
+#endif // !defined(PENTOMINOES_H)

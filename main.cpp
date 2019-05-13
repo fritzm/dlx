@@ -1,9 +1,11 @@
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "polyos.hpp"
+#include "Pentominoes.hpp"
+#include "Queens.hpp"
 
 #include "boost/any.hpp"
 #include "boost/program_options.hpp"
@@ -36,13 +38,23 @@ void validate(
 }
 
 
+void checkGreaterZero(int value)
+{
+   if (value <= 0) {
+       throw po::validation_error(po::validation_error::invalid_option_value);
+   }
+}
+
 int main(int argc, const char *argv[])
 {
     po::options_description opts;
 
     po::options_description puzzleOpts("Puzzle options (exactly one required)");
     puzzleOpts.add_options()
-        ("p5", po::value<Pentominoes *>(), "pentominoes mode (one of: 6x10, 5x12, 4x15, or 3x20)");
+        ("p5", po::value<Pentominoes *>(), 
+            "pentominoes mode (one of: 6x10, 5x12, 4x15, or 3x20)")
+        ("queens", po::value<int>()->notifier(checkGreaterZero), 
+            "n-queens mode (number of queens, greater than zero)");
 
     po::options_description generalOpts("General options");
     generalOpts.add_options()
@@ -68,12 +80,15 @@ int main(int argc, const char *argv[])
             return 1;
         }
 
-        if (vm.count("p5") != 1) {
+        if (vm.count("p5") + vm.count("queens") != 1) {
             throw po::error_with_no_option_name("must specify exactly one puzzle option");
         }
 
         if (vm.count("p5")) {
-            std::unique_ptr<Pentominoes> puzzle(vm["p5"].as<Pentominoes *>());
+            unique_ptr<Pentominoes> puzzle(vm["p5"].as<Pentominoes *>());
+            puzzle->Solve(vm["count"].as<bool>());
+        } else if (vm.count("queens")) {
+            auto puzzle = make_unique<Queens>(vm["queens"].as<int>());
             puzzle->Solve(vm["count"].as<bool>());
         }
 

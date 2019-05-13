@@ -7,7 +7,7 @@
 #include <set>
 #include <sstream>
 
-#include "polyos.hpp"
+#include "Pentominoes.hpp"
 
 #include "Element.hpp"
 #include "Matrix.hpp"
@@ -81,6 +81,8 @@ vector<Piece> pieces = {
 };
 
 
+namespace {
+
 void rectBoard(set<Cell>& board, int rows, int cols)
 {
     for(auto r=0; r<rows; ++r) {
@@ -88,6 +90,20 @@ void rectBoard(set<Cell>& board, int rows, int cols)
             board.insert(Cell(r, c));
         }
     }
+}
+
+
+Header *chooseColumn(Header *h)
+{
+    Header *c = nullptr;
+    int s = numeric_limits<int>::max();
+    for(auto j=static_cast<Header *>(h->r); j!=h; j=static_cast<Header *>(j->r)) {
+        if (j->count < s) {
+            c = j;
+            s = j->count;
+        }
+    }
+    return c;
 }
 
 
@@ -137,6 +153,8 @@ void print(vector<Element *>& solution)
     }
 }
 
+} // anonymous namespace
+
 
 Pentominoes::~Pentominoes()
 {
@@ -149,7 +167,7 @@ void Pentominoes::Solve(bool countOnly)
     Init(matrix, pieces);
     int nodeCount = 0;
     int solutionCount = 0;
-    matrix.findCovers(nodeCount, solutionCount, countOnly ? nullptr : print);
+    matrix.findCovers(nodeCount, solutionCount, chooseColumn, countOnly ? nullptr : print);
     cout << solutionCount << " solutions, " << nodeCount << " nodes visted" << endl;
 }
 
