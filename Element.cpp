@@ -34,7 +34,7 @@ void Element::InsertUD(Element *before)
 
 Header::Header(string const& name)
 :
-    count(0), name(name)
+    count(0), name(name), isPrimary(true)
 {
     col = this;
 }

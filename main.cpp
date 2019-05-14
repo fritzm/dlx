@@ -45,13 +45,14 @@ void checkGreaterZero(int value)
    }
 }
 
+
 int main(int argc, const char *argv[])
 {
     po::options_description opts;
 
     po::options_description puzzleOpts("Puzzle options (exactly one required)");
     puzzleOpts.add_options()
-        ("p5", po::value<Pentominoes *>(), 
+        ("pentominoes", po::value<Pentominoes *>(), 
             "pentominoes mode (one of: 6x10, 5x12, 4x15, or 3x20)")
         ("queens", po::value<int>()->notifier(checkGreaterZero), 
             "n-queens mode (number of queens, greater than zero)");

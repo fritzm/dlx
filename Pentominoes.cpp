@@ -93,20 +93,6 @@ void rectBoard(set<Cell>& board, int rows, int cols)
 }
 
 
-Header *chooseColumn(Header *h)
-{
-    Header *c = nullptr;
-    int s = numeric_limits<int>::max();
-    for(auto j=static_cast<Header *>(h->r); j!=h; j=static_cast<Header *>(j->r)) {
-        if (j->count < s) {
-            c = j;
-            s = j->count;
-        }
-    }
-    return c;
-}
-
-
 void print(vector<Element *>& solution)
 {
     static int count = 0;
@@ -167,7 +153,7 @@ void Pentominoes::Solve(bool countOnly)
     Init(matrix, pieces);
     int nodeCount = 0;
     int solutionCount = 0;
-    matrix.findCovers(nodeCount, solutionCount, chooseColumn, countOnly ? nullptr : print);
+    matrix.findCovers(nodeCount, solutionCount, countOnly ? nullptr : print);
     cout << solutionCount << " solutions, " << nodeCount << " nodes visted" << endl;
 }
 

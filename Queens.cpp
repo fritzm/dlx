@@ -11,24 +11,6 @@
 
 using namespace std;
 
-namespace {
-
-Header *chooseColumn(Header *h)
-{
-    Header *c = nullptr;
-    int s = numeric_limits<int>::max();
-    for(auto j=static_cast<Header *>(h->r); j!=h; j=static_cast<Header *>(j->r)) {
-        if (j->name[0] == 'A' || j->name[0] == 'B') continue;
-        if (j->count < s) {
-            c = j;
-            s = j->count;
-        }
-    }
-    return c;
-}
-
-} // anonymous namespace
-
 
 Queens::Queens(int n)
 :   n(n)
@@ -57,6 +39,7 @@ void Queens::Init(Matrix& matrix)
                 aname << "A" << a;
                 auto e3 = new Element();
                 auto c3 = matrix.findColumn(aname.str());
+                c3->isPrimary = false;
                 e3->InsertUD(c3);
                 e3->InsertLR(e1);
             }
@@ -66,6 +49,7 @@ void Queens::Init(Matrix& matrix)
                 bname << "B" << b;
                 auto e4 = new Element();
                 auto c4 = matrix.findColumn(bname.str());
+                c4->isPrimary = false;
                 e4->InsertUD(c4);
                 e4->InsertLR(e1);
             }
@@ -80,7 +64,7 @@ void Queens::Solve(bool countOnly)
     Init(matrix);
     int nodeCount = 0;
     int solutionCount = 0;
-    matrix.findCovers(nodeCount, solutionCount, chooseColumn, countOnly 
+    matrix.findCovers(nodeCount, solutionCount, countOnly 
         ? function<void (vector<Element *>&)>()
         : [this](vector<Element *>& solution){ Print(solution); }
     );
@@ -104,7 +88,7 @@ void Queens::Print(vector<Element *>& solution)
     cout << "#" << ++count << ":" << endl;
     for(int f=0; f<n; ++f) {
         for(int r=0; r<n; ++r) {
-            cout << (queens.count(pair<int, int>(r, f)) ? "\u2655 " : "\u30fb"); 
+            cout << (queens.count(pair<int, int>(r, f)) ? "\u265b " : "\u30fb"); 
         }
         cout << endl;
     }
