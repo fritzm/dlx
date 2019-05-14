@@ -81,12 +81,12 @@ int main(int argc, const char *argv[])
             return 1;
         }
 
-        if (vm.count("p5") + vm.count("queens") != 1) {
+        if (vm.count("pentominoes") + vm.count("queens") != 1) {
             throw po::error_with_no_option_name("must specify exactly one puzzle option");
         }
 
-        if (vm.count("p5")) {
-            unique_ptr<Pentominoes> puzzle(vm["p5"].as<Pentominoes *>());
+        if (vm.count("pentominoes")) {
+            unique_ptr<Pentominoes> puzzle(vm["pentominoes"].as<Pentominoes *>());
             puzzle->Solve(vm["count"].as<bool>());
         } else if (vm.count("queens")) {
             auto puzzle = make_unique<Queens>(vm["queens"].as<int>());
