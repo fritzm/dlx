@@ -4,23 +4,26 @@
 #include <set>
 #include <vector>
 
+#include "Puzzle.hpp"
+
 class Cell;
 class Element;
 class Matrix;
 class Piece;
 
 
-class Pentominoes
+class Pentominoes : public Puzzle
 {
-public:
-
-    virtual ~Pentominoes();
-
-    void solve(bool countOnly);
-
 protected:
 
-    void init(Matrix& matrix, std::vector<Piece> const& pieces);
+    void init(Matrix& matrix) override;
+    void print(std::vector<Element *>& solution) override;
+
+    virtual void buildBoard(std::set<Cell>& board) = 0;
+    virtual bool aspectFilter(Piece const& piece, int flip, int rot);
+    virtual bool placementFilter(Piece const& aspect, Cell const& pos);
+
+private:
 
     void addPieceAspects(Piece const& piece, std::set<Piece>& aspects);
 
@@ -29,10 +32,6 @@ protected:
         std::set<Cell> const& board, 
         std::vector<Piece>& placements
     );
-
-    virtual void buildBoard(std::set<Cell>& board) = 0;
-    virtual bool aspectFilter(Piece const& piece, int flip, int rot);
-    virtual bool placementFilter(Piece const& aspect, Cell const& pos);
 
 };
 

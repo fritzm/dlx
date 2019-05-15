@@ -65,6 +65,8 @@ public:
 };
 
 
+namespace {
+
 vector<Piece> pieces = {
     {"F", {{0,1}, {0,2}, {1,0}, {1,1}, {2,1}}},
     {"I", {{0,0}, {1,0}, {2,0}, {3,0}, {4,0}}},
@@ -81,8 +83,6 @@ vector<Piece> pieces = {
 };
 
 
-namespace {
-
 void rectBoard(set<Cell>& board, int rows, int cols)
 {
     for(auto r=0; r<rows; ++r) {
@@ -92,70 +92,7 @@ void rectBoard(set<Cell>& board, int rows, int cols)
     }
 }
 
-
-void print(vector<Element *>& solution)
-{
-    static int count = 0;
-
-    static string corner[16] = {
-        "\u0020", "\u2575", "\u2574", "\u2518",
-        "\u2576", "\u2514", "\u2500", "\u2534",
-        "\u2577", "\u2502", "\u2510", "\u2524",
-        "\u250c", "\u251c", "\u252c", "\u253c"
-    };
-
-    map<Cell, string> board;
-    int rmax = 0;
-    int cmax = 0;
-
-    for(auto &re: solution) {
-        auto pe = re;
-        for(; pe->col->name.length() > 1; pe=pe->l);
-        for(auto ce=pe->r; ce!=pe; ce=ce->r) {
-            int r = stoi(ce->col->name.substr(0,2)) + 1;
-            int c = stoi(ce->col->name.substr(2,2)) + 1;
-            rmax = max(rmax, r);
-            cmax = max(cmax, c);
-            board[Cell(r,c)] = pe->col->name;
-        }
-    }
-
-    cout << "#" << ++count << ":" << endl;
-    for(int r=1; r<=rmax+1; ++r) {
-        for(int c=1; c<=cmax+1; ++c) {
-            cout << corner[
-                ((board[Cell(r-1, c-1)] != board[Cell(r-1, c  )]) ? 1 : 0) +
-                ((board[Cell(r-1, c-1)] != board[Cell(r,   c-1)]) ? 2 : 0) +
-                ((board[Cell(r-1, c  )] != board[Cell(r,   c  )]) ? 4 : 0) +
-                ((board[Cell(r,   c-1)] != board[Cell(r,   c  )]) ? 8 : 0)
-            ];
-            cout << ((board[Cell(r-1, c)] != board[Cell(r, c)]) ? "\u2500\u2500\u2500" : "\u0020\u0020\u0020");
-        }
-        cout << endl;
-        for(int c=1; c<=cmax+1; ++c) {
-            cout << ((board[Cell(r, c-1)] != board[Cell(r, c)]) ? "\u2502\u0020\u0020\u0020" : "\u0020\u0020\u0020\u0020");            
-        }
-        cout << endl;
-    }
-}
-
 } // anonymous namespace
-
-
-Pentominoes::~Pentominoes()
-{
-}
-
-
-void Pentominoes::solve(bool countOnly)
-{
-    Matrix matrix;
-    init(matrix, pieces);
-    int nodeCount = 0;
-    int solutionCount = 0;
-    matrix.findCovers(nodeCount, solutionCount, countOnly ? nullptr : print);
-    cout << solutionCount << " solutions, " << nodeCount << " nodes visted" << endl;
-}
 
 
 void Pentominoes::addPieceAspects(Piece const& piece, set<Piece>& aspects)
@@ -212,7 +149,7 @@ void Pentominoes::addAspectPlacements(
 }
 
 
-void Pentominoes::init(Matrix& matrix, vector<Piece> const& pieces)
+void Pentominoes::init(Matrix& matrix)
 {
     set<Piece> aspects;
     for(auto const& piece: pieces) {
@@ -239,6 +176,53 @@ void Pentominoes::init(Matrix& matrix, vector<Piece> const& pieces)
             e2->insertUD(c2);
             e2->insertLR(e);
         }
+    }
+}
+
+
+void Pentominoes::print(vector<Element *>& solution)
+{
+    static int count = 0;
+
+    static string corner[16] = {
+        "\u0020", "\u2575", "\u2574", "\u2518",
+        "\u2576", "\u2514", "\u2500", "\u2534",
+        "\u2577", "\u2502", "\u2510", "\u2524",
+        "\u250c", "\u251c", "\u252c", "\u253c"
+    };
+
+    map<Cell, string> board;
+    int rmax = 0;
+    int cmax = 0;
+
+    for(auto &re: solution) {
+        auto pe = re;
+        for(; pe->col->name.length() > 1; pe=pe->l);
+        for(auto ce=pe->r; ce!=pe; ce=ce->r) {
+            int r = stoi(ce->col->name.substr(0,2)) + 1;
+            int c = stoi(ce->col->name.substr(2,2)) + 1;
+            rmax = max(rmax, r);
+            cmax = max(cmax, c);
+            board[Cell(r,c)] = pe->col->name;
+        }
+    }
+
+    cout << "#" << ++count << ":" << endl;
+    for(int r=1; r<=rmax+1; ++r) {
+        for(int c=1; c<=cmax+1; ++c) {
+            cout << corner[
+                ((board[Cell(r-1, c-1)] != board[Cell(r-1, c  )]) ? 1 : 0) +
+                ((board[Cell(r-1, c-1)] != board[Cell(r,   c-1)]) ? 2 : 0) +
+                ((board[Cell(r-1, c  )] != board[Cell(r,   c  )]) ? 4 : 0) +
+                ((board[Cell(r,   c-1)] != board[Cell(r,   c  )]) ? 8 : 0)
+            ];
+            cout << ((board[Cell(r-1, c)] != board[Cell(r, c)]) ? "\u2500\u2500\u2500" : "\u0020\u0020\u0020");
+        }
+        cout << endl;
+        for(int c=1; c<=cmax+1; ++c) {
+            cout << ((board[Cell(r, c-1)] != board[Cell(r, c)]) ? "\u2502\u0020\u0020\u0020" : "\u0020\u0020\u0020\u0020");            
+        }
+        cout << endl;
     }
 }
 

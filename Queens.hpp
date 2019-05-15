@@ -3,21 +3,21 @@
 
 #include <vector>
 
+#include "Puzzle.hpp"
+
 class Element;
 class Matrix;
 
-class Queens
+class Queens : public Puzzle
 {
 public:
 
     Queens(int n);
 
-    void solve(bool countOnly);
-
 private:
 
-    void init(Matrix& matrix);
-    void print(std::vector<Element *>& solution);
+    void init(Matrix& matrix) override;
+    void print(std::vector<Element *>& solution) override;
 
     int n;
 

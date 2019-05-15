@@ -62,20 +62,6 @@ void Queens::init(Matrix& matrix)
 }
 
 
-void Queens::solve(bool countOnly)
-{
-    Matrix matrix;
-    init(matrix);
-    int nodeCount = 0;
-    int solutionCount = 0;
-    matrix.findCovers(nodeCount, solutionCount, countOnly 
-        ? function<void (vector<Element *>&)>()
-        : [this](vector<Element *>& solution){ print(solution); }
-    );
-    cout << solutionCount << " solutions, " << nodeCount << " nodes visted" << endl;
-}
-
-
 void Queens::print(vector<Element *>& solution)
 {
     static int count = 0;
