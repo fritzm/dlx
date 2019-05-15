@@ -87,13 +87,13 @@ void Matrix::search(
     vector<Element *> &solution,
     function<void (vector<Element *>&)> print)
 {
+    ++nodeCount;
     auto c = chooseColumn();
     if (!c) {
         ++solutionCount;
         if (print) print(solution);
         return;
     }
-    ++nodeCount;
     coverColumn(c);
     for(auto r=c->d; r!=c; r=r->d) {
         solution.push_back(r);

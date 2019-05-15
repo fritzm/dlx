@@ -20,20 +20,26 @@ Queens::Queens(int n)
 
 void Queens::init(Matrix& matrix)
 {
+    int r = (n-1)/2, rs = -1;
     for(int i=0; i<n; ++i) {
+        r += (rs*i);
+        rs *= -1;
+        int f = (n-1)/2, fs = -1;
         for(int j=0; j<n; ++j) {
+            f += (fs*j);
+            fs *= -1;
             ostringstream rname;
-            rname << "R" << i;
+            rname << "R" << r;
             auto e1 = new Element();
             auto c1 = matrix.findColumn(rname.str());
             e1->insertUD(c1);
             ostringstream fname;
-            fname << "F" << j;
+            fname << "F" << f;
             auto e2 = new Element();
             auto c2 = matrix.findColumn(fname.str());
             e2->insertUD(c2);
             e2->insertLR(e1);
-            int a = i+j;
+            int a = r+f;
             if (a!=0 && a!=(2*n-2)) {
                 ostringstream aname;
                 aname << "A" << a;
@@ -42,7 +48,7 @@ void Queens::init(Matrix& matrix)
                 e3->insertUD(c3);
                 e3->insertLR(e1);
             }
-            int b = n - 1 - i + j;
+            int b = n - 1 - r + f;
             if (b!=0 && b!=(2*n-2)) {
                 ostringstream bname;
                 bname << "B" << b;
