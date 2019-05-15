@@ -2,6 +2,7 @@
 #define MATRIX_H
 
 #include <functional>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -14,7 +15,7 @@ public:
 
     Matrix();
 
-    Header* findColumn(std::string const& name);
+    Header* findColumn(std::string const& name, bool isPrimary=true);
 
     void findCovers(
         int &nodeCount,
@@ -37,6 +38,7 @@ private:
     );
 
     Header h;
+    std::map<std::string, Header*> columns;
 
 };
 

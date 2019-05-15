@@ -29,7 +29,6 @@ public:
 
     int count;
     std::string name;   
-    bool isPrimary;
 
 };
 

@@ -17,18 +17,15 @@ Matrix::Matrix()
 }
 
 
-Header* Matrix::findColumn(string const& name)
+Header* Matrix::findColumn(string const& name, bool isPrimary)
 {
-    Element *ce = h.r;
-    while((ce != &h) && (ce->col->name < name)) {
-        ce = ce->r;
+    auto c = columns[name];
+    if (c == nullptr) {
+        c = new Header(name);
+        columns[name] = c;
+        if (isPrimary) c->InsertLR(&h);        
     }
-    if (ce->col->name != name) {
-        auto ne = new Header(name);
-        ne->InsertLR(ce);
-        ce = ne;
-    }
-    return ce->col;
+    return c;
 }
 
 
@@ -47,7 +44,7 @@ Header *Matrix::chooseColumn()
     Header *c = nullptr;
     int s = numeric_limits<int>::max();
     for(auto j=static_cast<Header *>(h.r); j!=&h; j=static_cast<Header *>(j->r)) {
-        if (j->isPrimary && (j->count < s)) {
+        if (j->count < s) {
             c = j;
             s = j->count;
         }
@@ -90,13 +87,13 @@ void Matrix::search(
     vector<Element *> &solution,
     function<void (vector<Element *>&)> print)
 {
-    ++nodeCount;
     auto c = chooseColumn();
     if (!c) {
         ++solutionCount;
         if (print) print(solution);
         return;
     }
+    ++nodeCount;
     coverColumn(c);
     for(auto r=c->d; r!=c; r=r->d) {
         solution.push_back(r);

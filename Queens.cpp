@@ -38,8 +38,7 @@ void Queens::Init(Matrix& matrix)
                 ostringstream aname;
                 aname << "A" << a;
                 auto e3 = new Element();
-                auto c3 = matrix.findColumn(aname.str());
-                c3->isPrimary = false;
+                auto c3 = matrix.findColumn(aname.str(), false);
                 e3->InsertUD(c3);
                 e3->InsertLR(e1);
             }
@@ -48,8 +47,7 @@ void Queens::Init(Matrix& matrix)
                 ostringstream bname;
                 bname << "B" << b;
                 auto e4 = new Element();
-                auto c4 = matrix.findColumn(bname.str());
-                c4->isPrimary = false;
+                auto c4 = matrix.findColumn(bname.str(), false);
                 e4->InsertUD(c4);
                 e4->InsertLR(e1);
             }
