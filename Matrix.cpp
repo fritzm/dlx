@@ -23,7 +23,7 @@ Header* Matrix::findColumn(string const& name, bool isPrimary)
     if (c == nullptr) {
         c = new Header(name);
         columns[name] = c;
-        if (isPrimary) c->InsertLR(&h);        
+        if (isPrimary) c->insertLR(&h);        
     }
     return c;
 }

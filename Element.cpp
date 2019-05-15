@@ -12,7 +12,7 @@ Element::Element()
 }
 
 
-void Element::InsertLR(Element *before)
+void Element::insertLR(Element *before)
 {
     r = before;
     l = before->l;
@@ -21,7 +21,7 @@ void Element::InsertLR(Element *before)
 }
 
 
-void Element::InsertUD(Element *before)
+void Element::insertUD(Element *before)
 {
     d = before;
     u = before->u;

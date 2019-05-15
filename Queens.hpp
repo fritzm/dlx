@@ -12,12 +12,12 @@ public:
 
     Queens(int n);
 
-    void Solve(bool countOnly);
+    void solve(bool countOnly);
 
 private:
 
-    void Init(Matrix& matrix);
-    void Print(std::vector<Element *>& solution);
+    void init(Matrix& matrix);
+    void print(std::vector<Element *>& solution);
 
     int n;
 

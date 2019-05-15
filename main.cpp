@@ -87,10 +87,10 @@ int main(int argc, const char *argv[])
 
         if (vm.count("pentominoes")) {
             unique_ptr<Pentominoes> puzzle(vm["pentominoes"].as<Pentominoes *>());
-            puzzle->Solve(vm["count"].as<bool>());
+            puzzle->solve(vm["count"].as<bool>());
         } else if (vm.count("queens")) {
             auto puzzle = make_unique<Queens>(vm["queens"].as<int>());
-            puzzle->Solve(vm["count"].as<bool>());
+            puzzle->solve(vm["count"].as<bool>());
         }
 
         return 0;

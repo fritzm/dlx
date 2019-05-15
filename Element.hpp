@@ -9,8 +9,8 @@ public:
 
     Element();
 
-    void InsertLR(Element *before);
-    void InsertUD(Element *before);
+    void insertLR(Element *before);
+    void insertUD(Element *before);
 
     Element *l; 
     Element *r; 
