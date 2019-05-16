@@ -23,9 +23,20 @@ Header* Matrix::findColumn(string const& name, bool isPrimary)
     if (c == nullptr) {
         c = new Header(name);
         columns[name] = c;
-        if (isPrimary) c->insertLR(&h);        
+        if (isPrimary) {
+            c->insertLR(&h);
+            ++primaryCols;
+        }
+        ++totalCols;
     }
     return c;
+}
+
+
+void Matrix::getColumnStats(int& primary, int& total)
+{
+    primary = primaryCols;
+    total = totalCols;
 }
 
 

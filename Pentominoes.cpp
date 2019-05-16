@@ -149,8 +149,11 @@ void Pentominoes::addAspectPlacements(
 }
 
 
-void Pentominoes::init(Matrix& matrix)
+void Pentominoes::init(int& rows, int& primaryCols, int& totalCols, int& elems)
 {
+    subGoals.emplace_back();
+    auto& matrix = subGoals.back();
+
     set<Piece> aspects;
     for(auto const& piece: pieces) {
         addPieceAspects(piece, aspects);
@@ -168,6 +171,7 @@ void Pentominoes::init(Matrix& matrix)
         auto c = matrix.findColumn(placement.name);
         auto e = new Element();
         e->insertUD(c);
+        ++elems;
         for(auto const& cell: placement.cells) {
             ostringstream cname;
             cname << setfill('0') << setw(2) << cell.rOffset << setw(2) << cell.cOffset;
@@ -175,8 +179,15 @@ void Pentominoes::init(Matrix& matrix)
             auto e2 = new Element();
             e2->insertUD(c2);
             e2->insertLR(e);
+            ++elems;
+            ++rows;
         }
     }
+
+    int primary, total;
+    matrix.getColumnStats(primary, total);
+    primaryCols += primary;
+    totalCols += total;
 }
 
 

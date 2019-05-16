@@ -3,8 +3,9 @@
 
 #include <vector>
 
+#include "Matrix.hpp"
+
 class Element;
-class Matrix;
 
 class Puzzle
 {
@@ -16,8 +17,10 @@ public:
 
 protected:
 
-    virtual void init(Matrix& matrix) = 0;
+    virtual void init(int& rows, int& primaryCols, int& totalCols, int& elems) = 0;
     virtual void print(std::vector<Element *>& solution) = 0;
+
+    std::vector<Matrix> subGoals;
 
 };
 

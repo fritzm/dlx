@@ -16,6 +16,7 @@ public:
     Matrix();
 
     Header* findColumn(std::string const& name, bool isPrimary=true);
+    void getColumnStats(int& primary, int& total);
 
     void findCovers(
         int &nodeCount,
@@ -39,6 +40,8 @@ private:
 
     Header h;
     std::map<std::string, Header*> columns;
+    int primaryCols;
+    int totalCols;
 
 };
 

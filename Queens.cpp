@@ -18,27 +18,36 @@ Queens::Queens(int n)
 }
 
 
-void Queens::init(Matrix& matrix)
+void Queens::init(int& rows, int& primaryCols, int& totalCols, int& elems)
 {
+    subGoals.emplace_back();
+    auto& matrix = subGoals.back();
+
     int r = (n-1)/2, rs = -1;
     for(int i=0; i<n; ++i) {
         r += (rs*i);
         rs *= -1;
+
         int f = (n-1)/2, fs = -1;
         for(int j=0; j<n; ++j) {
             f += (fs*j);
             fs *= -1;
+
             ostringstream rname;
             rname << "R" << r;
             auto e1 = new Element();
             auto c1 = matrix.findColumn(rname.str());
             e1->insertUD(c1);
+            ++elems;
+
             ostringstream fname;
             fname << "F" << f;
             auto e2 = new Element();
             auto c2 = matrix.findColumn(fname.str());
             e2->insertUD(c2);
             e2->insertLR(e1);
+            ++elems;
+
             int a = r+f;
             if (a!=0 && a!=(2*n-2)) {
                 ostringstream aname;
@@ -47,7 +56,9 @@ void Queens::init(Matrix& matrix)
                 auto c3 = matrix.findColumn(aname.str(), false);
                 e3->insertUD(c3);
                 e3->insertLR(e1);
+                ++elems;
             }
+
             int b = n - 1 - r + f;
             if (b!=0 && b!=(2*n-2)) {
                 ostringstream bname;
@@ -56,9 +67,17 @@ void Queens::init(Matrix& matrix)
                 auto c4 = matrix.findColumn(bname.str(), false);
                 e4->insertUD(c4);
                 e4->insertLR(e1);
+                ++elems;
             }
+
+            ++rows;
         }
     }
+
+    int primary, total;
+    matrix.getColumnStats(primary, total);
+    primaryCols += primary;
+    totalCols += total;
 }
 
 
