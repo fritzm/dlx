@@ -149,10 +149,10 @@ void Pentominoes::addAspectPlacements(
 }
 
 
-void Pentominoes::init(int& rows, int& primaryCols, int& totalCols, int& elems)
+void Pentominoes::init()
 {
     subGoals.emplace_back();
-    auto& matrix = subGoals.back();
+    auto& sg = subGoals.back();
 
     set<Piece> aspects;
     for(auto const& piece: pieces) {
@@ -168,26 +168,21 @@ void Pentominoes::init(int& rows, int& primaryCols, int& totalCols, int& elems)
     }
 
     for(auto const& placement: placements) {
-        auto c = matrix.findColumn(placement.name);
+        auto c = sg.matrix.findColumn(placement.name);
         auto e = new Element();
         e->insertUD(c);
-        ++elems;
+        ++sg.elems;
         for(auto const& cell: placement.cells) {
             ostringstream cname;
             cname << setfill('0') << setw(2) << cell.rOffset << setw(2) << cell.cOffset;
-            auto c2 = matrix.findColumn(cname.str());
+            auto c2 = sg.matrix.findColumn(cname.str());
             auto e2 = new Element();
             e2->insertUD(c2);
             e2->insertLR(e);
-            ++elems;
-            ++rows;
+            ++sg.elems;
+            ++sg.rows;
         }
     }
-
-    int primary, total;
-    matrix.getColumnStats(primary, total);
-    primaryCols += primary;
-    totalCols += total;
 }
 
 

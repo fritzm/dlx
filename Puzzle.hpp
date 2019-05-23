@@ -17,10 +17,18 @@ public:
 
 protected:
 
-    virtual void init(int& rows, int& primaryCols, int& totalCols, int& elems) = 0;
+    virtual void init() = 0;
     virtual void print(std::vector<Element *>& solution) = 0;
 
-    std::vector<Matrix> subGoals;
+    struct SubGoal {
+        Matrix matrix;
+        int rows = 0;
+        int elems = 0;
+        int nodes = 0;
+        int solutions = 0;
+    };
+
+    std::vector<SubGoal> subGoals;
 
 };
 

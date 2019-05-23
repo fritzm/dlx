@@ -15,21 +15,34 @@ Puzzle::~Puzzle()
 
 void Puzzle::solve(bool countOnly)
 {
-    int rows = 0, primaryCols = 0, totalCols = 0, elems = 0;
-    init(rows, primaryCols, totalCols, elems);
+    init();
 
     int nodeCount = 0, solutionCount = 0;
-    for(auto &matrix: subGoals) {
-        matrix.findCovers(nodeCount, solutionCount, countOnly 
+    for(auto& sg: subGoals) {
+        sg.matrix.findCovers(sg.nodes, sg.solutions, countOnly 
             ? function<void (vector<Element *>&)>()
             : [this](vector<Element *>& solution){ print(solution); }
         );
+        solutionCount += sg.solutions;
     }
 
-    cout << subGoals.size() << " subgoals, ";
-    cout << rows << "x" << totalCols << " constraint matrix, ";
-    cout << primaryCols << " primary columns, ";
-    cout << elems << " elements" << endl;
-    cout << solutionCount << " solutions, ";
-    cout << nodeCount << " search nodes visted" << endl;
+    cout << solutionCount << " solutions found" << endl << endl;
+
+    if (!subGoals.empty()) {
+
+        int primaryCols, totalCols;
+        subGoals[0].matrix.getColumnStats(primaryCols, totalCols);
+        cout << totalCols << " constraint columns (" << primaryCols << " primary)" << endl;
+
+        int n = 0;
+        for(auto& sg: subGoals) {
+            if (subGoals.size() > 1) cout << "Subgoal " << ++n << ": ";
+            cout << sg.rows << " rows, " << sg.elems << " elements, ";
+            if (subGoals.size() > 1) cout << sg.solutions << " solutions, ";
+            cout << sg.nodes << " nodes traversed" << endl;
+        }
+
+        cout << endl;
+    }
+
 }

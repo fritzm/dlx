@@ -16,7 +16,7 @@ public:
 
 private:
 
-    void init(int& rows, int& primaryCols, int& totalCols, int& elem) override;
+    void init() override;
     void print(std::vector<Element *>& solution) override;
 
     int n;

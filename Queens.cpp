@@ -18,10 +18,10 @@ Queens::Queens(int n)
 }
 
 
-void Queens::init(int& rows, int& primaryCols, int& totalCols, int& elems)
+void Queens::init()
 {
     subGoals.emplace_back();
-    auto& matrix = subGoals.back();
+    auto& sg = subGoals.back();
 
     int r = (n-1)/2, rs = -1;
     for(int i=0; i<n; ++i) {
@@ -36,27 +36,27 @@ void Queens::init(int& rows, int& primaryCols, int& totalCols, int& elems)
             ostringstream rname;
             rname << "R" << r;
             auto e1 = new Element();
-            auto c1 = matrix.findColumn(rname.str());
+            auto c1 = sg.matrix.findColumn(rname.str());
             e1->insertUD(c1);
-            ++elems;
+            ++sg.elems;
 
             ostringstream fname;
             fname << "F" << f;
             auto e2 = new Element();
-            auto c2 = matrix.findColumn(fname.str());
+            auto c2 = sg.matrix.findColumn(fname.str());
             e2->insertUD(c2);
             e2->insertLR(e1);
-            ++elems;
+            ++sg.elems;
 
             int a = r+f;
             if (a!=0 && a!=(2*n-2)) {
                 ostringstream aname;
                 aname << "A" << a;
                 auto e3 = new Element();
-                auto c3 = matrix.findColumn(aname.str(), false);
+                auto c3 = sg.matrix.findColumn(aname.str(), false);
                 e3->insertUD(c3);
                 e3->insertLR(e1);
-                ++elems;
+                ++sg.elems;
             }
 
             int b = n - 1 - r + f;
@@ -64,20 +64,15 @@ void Queens::init(int& rows, int& primaryCols, int& totalCols, int& elems)
                 ostringstream bname;
                 bname << "B" << b;
                 auto e4 = new Element();
-                auto c4 = matrix.findColumn(bname.str(), false);
+                auto c4 = sg.matrix.findColumn(bname.str(), false);
                 e4->insertUD(c4);
                 e4->insertLR(e1);
-                ++elems;
+                ++sg.elems;
             }
 
-            ++rows;
+            ++sg.rows;
         }
     }
-
-    int primary, total;
-    matrix.getColumnStats(primary, total);
-    primaryCols += primary;
-    totalCols += total;
 }
 
 
