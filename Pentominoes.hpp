@@ -8,7 +8,6 @@
 
 class Cell;
 class Element;
-class Matrix;
 class Piece;
 
 

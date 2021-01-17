@@ -173,9 +173,7 @@ void Pentominoes::init()
         e->insertUD(c);
         ++sg.elems;
         for(auto const& cell: placement.cells) {
-            ostringstream cname;
-            cname << setfill('0') << setw(2) << cell.rOffset << setw(2) << cell.cOffset;
-            auto c2 = sg.matrix.findColumn(cname.str());
+            auto c2 = sg.matrix.findColumn(cell.name());
             auto e2 = new Element();
             e2->insertUD(c2);
             e2->insertLR(e);

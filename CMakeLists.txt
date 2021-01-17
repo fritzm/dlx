@@ -5,6 +5,6 @@ find_package(Boost 1.58 COMPONENTS
     program_options REQUIRED
 )
 
-add_executable(dlx Element.cpp Matrix.cpp Pentominoes.cpp Puzzle.cpp Queens.cpp main.cpp)
+add_executable(dlx Element.cpp Matrix.cpp Pentominoes.cpp Puzzle.cpp Queens.cpp Pyramid.cpp main.cpp)
 target_compile_options(dlx PRIVATE -std=c++14)
 target_link_libraries(dlx Boost::program_options)

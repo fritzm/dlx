@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Pentominoes.hpp"
+#include "Pyramid.hpp"
 #include "Queens.hpp"
 
 #include "boost/any.hpp"
@@ -54,6 +55,8 @@ int main(int argc, const char *argv[])
     puzzleOpts.add_options()
         ("pentominoes", po::value<Pentominoes *>(), 
             "pentominoes mode (one of: 6x10, 5x12, 4x15, or 3x20)")
+        ("pyramid", po::bool_switch(),
+            "3d pyramid puzzle")
         ("queens", po::value<int>()->notifier(checkGreaterZero), 
             "n-queens mode (number of queens, greater than zero)");
 
@@ -81,7 +84,7 @@ int main(int argc, const char *argv[])
             return 1;
         }
 
-        if (vm.count("pentominoes") + vm.count("queens") != 1) {
+        if (vm.count("pentominoes") + vm.count("queens") + (vm["pyramid"].defaulted() ? 0 : 1) != 1) {
             throw po::error_with_no_option_name("must specify exactly one puzzle option");
         }
 
@@ -90,6 +93,9 @@ int main(int argc, const char *argv[])
             puzzle->solve(vm["count"].as<bool>());
         } else if (vm.count("queens")) {
             auto puzzle = make_unique<Queens>(vm["queens"].as<int>());
+            puzzle->solve(vm["count"].as<bool>());
+        } else if (vm["pyramid"].as<bool>()) {
+            auto puzzle = make_unique<Pyramid>();
             puzzle->solve(vm["count"].as<bool>());
         }
 
