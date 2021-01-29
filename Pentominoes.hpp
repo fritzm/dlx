@@ -16,7 +16,7 @@ class Pentominoes : public Puzzle
 protected:
 
     void init() override;
-    void print(std::vector<Element *>& solution) override;
+    void print(std::vector<Element*>& solution) override;
 
     virtual void buildBoard(std::set<Cell>& board) = 0;
     virtual bool aspectFilter(Piece const& piece, int flip, int rot);

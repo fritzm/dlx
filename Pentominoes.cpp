@@ -108,18 +108,18 @@ void Pentominoes::addPieceAspects(Piece const& piece, set<Piece>& aspects)
                 minrow = min(minrow, cell.rOffset);
                 mincol = min(mincol, cell.cOffset);
             }
-            for(auto & cell: aspect.cells) {
+            for(auto& cell: aspect.cells) {
                 cell.rOffset -= minrow;
                 cell.cOffset -= mincol;
             }
             aspects.insert(aspect);
-            for(auto & cell: aspect.cells) {
+            for(auto& cell: aspect.cells) {
                 auto temp = cell.rOffset;
                 cell.rOffset = cell.cOffset;
                 cell.cOffset = -temp;
             }
         }
-        for(auto & cell: aspect.cells) {
+        for(auto& cell: aspect.cells) {
             cell.rOffset = -cell.rOffset;
         }
     }
@@ -129,12 +129,12 @@ void Pentominoes::addPieceAspects(Piece const& piece, set<Piece>& aspects)
 void Pentominoes::addAspectPlacements(
     Piece const& aspect, 
     set<Cell> const& board, 
-    vector<Piece> & placements)
+    vector<Piece>& placements)
 {
     for(auto const& pos: board) {
         auto placement = aspect;
         bool fit = true;
-        for(auto & cell: placement.cells) {
+        for(auto& cell: placement.cells) {
             cell.rOffset += pos.rOffset;
             cell.cOffset += pos.cOffset;
             if (board.count(cell) == 0) {
@@ -199,7 +199,7 @@ void Pentominoes::print(vector<Element *>& solution)
     int rmax = 0;
     int cmax = 0;
 
-    for(auto &re: solution) {
+    for(auto& re: solution) {
         auto pe = re;
         for(; pe->col->name.length() > 1; pe=pe->l);
         for(auto ce=pe->r; ce!=pe; ce=ce->r) {
@@ -220,11 +220,13 @@ void Pentominoes::print(vector<Element *>& solution)
                 ((board[Cell(r-1, c  )] != board[Cell(r,   c  )]) ? 4 : 0) +
                 ((board[Cell(r,   c-1)] != board[Cell(r,   c  )]) ? 8 : 0)
             ];
-            cout << ((board[Cell(r-1, c)] != board[Cell(r, c)]) ? "\u2500\u2500\u2500" : "\u0020\u0020\u0020");
+            cout << ((board[Cell(r-1, c)] != board[Cell(r, c)]) 
+                ? "\u2500\u2500\u2500" : "\u0020\u0020\u0020");
         }
         cout << endl;
         for(int c=1; c<=cmax+1; ++c) {
-            cout << ((board[Cell(r, c-1)] != board[Cell(r, c)]) ? "\u2502\u0020\u0020\u0020" : "\u0020\u0020\u0020\u0020");            
+            cout << ((board[Cell(r, c-1)] != board[Cell(r, c)]) 
+                ? "\u2502\u0020\u0020\u0020" : "\u0020\u0020\u0020\u0020");            
         }
         cout << endl;
     }

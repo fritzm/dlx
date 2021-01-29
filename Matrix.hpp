@@ -21,7 +21,7 @@ public:
     void findCovers(
         int &nodeCount,
         int &solutionCount,
-        std::function<void (std::vector<Element *>&)> print
+        std::function<void (std::vector<Element*>&)> print
     );
 
 private:
@@ -35,7 +35,7 @@ private:
         int &nodeCount,
         int &solnCount,    
         std::vector<Element *> &solution, 
-        std::function<void (std::vector<Element *>&)> print
+        std::function<void (std::vector<Element*>&)> print
     );
 
     Header h;

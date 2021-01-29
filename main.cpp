@@ -7,6 +7,7 @@
 #include "Pentominoes.hpp"
 #include "Pyramid.hpp"
 #include "Queens.hpp"
+#include "Soma.hpp"
 
 #include "boost/any.hpp"
 #include "boost/program_options.hpp"
@@ -54,11 +55,13 @@ int main(int argc, const char *argv[])
     po::options_description puzzleOpts("Puzzle options (exactly one required)");
     puzzleOpts.add_options()
         ("pentominoes", po::value<Pentominoes *>(), 
-            "pentominoes mode (one of: 6x10, 5x12, 4x15, or 3x20)")
+            "pentominoes (one of: 6x10, 5x12, 4x15, or 3x20)")
         ("pyramid", po::bool_switch(),
-            "3d pyramid puzzle")
+            "Project Genius 3d pyramid puzzle")
         ("queens", po::value<int>()->notifier(checkGreaterZero), 
-            "n-queens mode (number of queens, greater than zero)");
+            "n-queens (number of queens, greater than zero)")
+        ("soma", po::bool_switch(),
+            "Soma cube puzzle");
 
     po::options_description generalOpts("General options");
     generalOpts.add_options()
@@ -84,7 +87,11 @@ int main(int argc, const char *argv[])
             return 1;
         }
 
-        if (vm.count("pentominoes") + vm.count("queens") + (vm["pyramid"].defaulted() ? 0 : 1) != 1) {
+        if ((vm.count("pentominoes") 
+            + (vm["pyramid"].defaulted() ? 0 : 1)
+            + vm.count("queens") 
+            + (vm["soma"].defaulted() ? 0 : 1)) != 1) 
+        {
             throw po::error_with_no_option_name("must specify exactly one puzzle option");
         }
 
@@ -96,6 +103,9 @@ int main(int argc, const char *argv[])
             puzzle->solve(vm["count"].as<bool>());
         } else if (vm["pyramid"].as<bool>()) {
             auto puzzle = make_unique<Pyramid>();
+            puzzle->solve(vm["count"].as<bool>());
+        } else if (vm["soma"].as<bool>()) {
+            auto puzzle = make_unique<Soma>();
             puzzle->solve(vm["count"].as<bool>());
         }
 
