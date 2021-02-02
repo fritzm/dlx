@@ -1,20 +1,27 @@
-cmake_minimum_required (VERSION 3.0)
-project (dlx)
+cmake_minimum_required(VERSION 3.13)
+project(dlx)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(Boost 1.58 COMPONENTS 
     program_options REQUIRED
 )
 
-add_executable(dlx 
-    Element.cpp 
+add_subdirectory(common)
+add_subdirectory(queens)
+add_subdirectory(sudoku)
+add_subdirectory(tiling)
+
+add_executable(dlx
     main.cpp
-    Matrix.cpp 
-    Pentominoes.cpp 
-    Puzzle.cpp 
-    Pyramid.cpp 
-    Queens.cpp 
-    Soma.cpp 
 )
 
-target_compile_options(dlx PRIVATE -std=c++14)
-target_link_libraries(dlx Boost::program_options)
+target_link_libraries(dlx 
+    common
+    queens
+    sudoku
+    tiling
+    Boost::program_options
+)

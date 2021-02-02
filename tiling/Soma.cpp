@@ -97,7 +97,7 @@ namespace {
 vector<SomaPiece> pieces = {
     {"V", {{0,0,0},{0,0,1},{0,1,1}}},
     {"L", {{0,0,0},{0,0,1},{0,1,1},{0,2,1}}},
-    {"T", {{0,1,0},{0,0,1},{0,1,1},{0,2,1}}},
+    {"T", {{0,0,0},{1,0,0},{2,0,0},{1,1,0}}},
     {"Z", {{0,1,0},{1,1,0},{1,0,0},{2,0,0}}},
     {"A", {{0,0,0},{0,1,0},{0,1,1},{1,1,1}}},
     {"B", {{0,0,1},{0,1,1},{0,1,0},{1,1,0}}},
@@ -194,12 +194,15 @@ void Soma::addAspectPlacements(
 
 bool Soma::aspectFilter(SomaPiece const& piece, int flip, int rot)
 {
-    return ((piece.name == "L") && ((flip != 0) || (rot != 0)));
+    if ((piece.name == "T") && ((flip != 0) || (rot != 0))) return true;
+    return false;
 }
 
 
 bool Soma::placementFilter(SomaPiece const& aspect, SomaCell const& pos)
 {
+    if ((aspect.name == "T") && !(pos == SomaCell(0, 0, 0))) return true;
+    if ((aspect.name == "P") && (pos.xOffset != 1)) return true;
     return false;
 }
 
