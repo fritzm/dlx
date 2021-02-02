@@ -8,6 +8,7 @@
 #include "Pyramid.hpp"
 #include "Queens.hpp"
 #include "Soma.hpp"
+#include "Sudoku.hpp"
 
 #include "boost/any.hpp"
 #include "boost/program_options.hpp"
@@ -61,7 +62,9 @@ int main(int argc, const char *argv[])
         ("queens", po::value<int>()->notifier(checkGreaterZero), 
             "n-queens (number of queens, greater than zero)")
         ("soma", po::bool_switch(),
-            "Soma cube puzzle");
+            "Soma cube puzzle")
+        ("sudoku", po::bool_switch(),
+            "Sudoku solver (will prompt for puzzle input)");
 
     po::options_description generalOpts("General options");
     generalOpts.add_options()
@@ -90,7 +93,9 @@ int main(int argc, const char *argv[])
         if ((vm.count("pentominoes") 
             + (vm["pyramid"].defaulted() ? 0 : 1)
             + vm.count("queens") 
-            + (vm["soma"].defaulted() ? 0 : 1)) != 1) 
+            + (vm["soma"].defaulted() ? 0 : 1)
+            + (vm["sudoku"].defaulted() ? 0 : 1))
+            != 1)
         {
             throw po::error_with_no_option_name("must specify exactly one puzzle option");
         }
@@ -106,6 +111,9 @@ int main(int argc, const char *argv[])
             puzzle->solve(vm["count"].as<bool>());
         } else if (vm["soma"].as<bool>()) {
             auto puzzle = make_unique<Soma>();
+            puzzle->solve(vm["count"].as<bool>());
+        } else if (vm["sudoku"].as<bool>()) {
+            auto puzzle = make_unique<Sudoku>();
             puzzle->solve(vm["count"].as<bool>());
         }
 
